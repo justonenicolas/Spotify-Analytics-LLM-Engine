@@ -2,8 +2,8 @@
 # CABECERA
 # ============================================================
 # Alumno: Nicolas Garcia Gonzalez
-# URL Streamlit Cloud: https://...streamlit.app
-# URL GitHub: https://github.com/...
+# URL Streamlit Cloud: https://spotify-analytics-llm-engine-vnczetylqm9awwhngcnfpo.streamlit.app/
+# URL GitHub: https://github.com/justonenicolas/Spotify-Analytics-LLM-Engine
 
 # ============================================================
 # IMPORTS
@@ -403,18 +403,40 @@ if prompt := st.chat_input("Ej: ¿Cuál es mi artista más escuchado?"):
 
 
 # ============================================================
-# REFLEXIÓN TÉCNICA (Extensión: 28 líneas de texto sin contar espacios entre párrafos al abrirlo en Anaconda Jupyter)
+# REFLEXIÓN TÉCNICA (Extensión: 29 líneas de texto sin contar espacios entre párrafos al abrirlo en Anaconda Jupyter o el lector de GitHub)
 # ============================================================
 # La aplicación consta de 3 secciones principales: 1. Definición del entorno y variables de ejecución, 2. Definición de funciones y 3. Interfaz de usuario. 
 
-# En la Sección 1 se cargan las librerias necesarias para el procesamiento, visualización de datos y conexiones al LLM, así como las instrucciones, limitaciones y formatos de respuesta que debe seguir el modelo de lenguaje para responder a las solicitudes.
+# En la Sección 1 se cargan las librerias necesarias para el procesamiento, visualización de datos y conexiones al LLM, así como las instrucciones, limitaciones y
+# formatos de respuesta que debe seguir el modelo de lenguaje para responder a las solicitudes.
 
-# En esta primera sección, específicamente en la definición del system prompt, es donde radica la esencia de la aplicación. Dicho prompt contiene tanto las indicaciones generales de trabajo como los elementos de validación y restricciones que permitirán que las respuestas se ejecuten correctamente. Una de las restricciones más relevantes acá es la limitación de los nombres de columnas del dataset, puesto que el modelo podría inferir nombres basados en el contexto de la pregunta sin que fueran nombres reales en el dataset, desembocando en errores de ejecución dado que Python tendría conflictos para encontrar dentro de sus indices un campo que el modelo trató de rellenar para completar la solicitud. Si dicha restricción se eliminara, ante preguntas como ¿Cuál es mi album preferido? la respuesta del LLM podría hacer referencia a campos inexistentes como df['album_title'] o df['artist_album'], mientras que mantener la restricción permite que el LLM responda correctamente refiriendose al campo df['album_name'], el cual es un campo válido en el dataset.
+# En esta primera sección, específicamente en la definición del system prompt, es donde radica la esencia de la aplicación. Dicho prompt contiene tanto las 
+# indicaciones generales de trabajo como los elementos de validación y restricciones que permitirán que las respuestas se ejecuten correctamente. Una de las 
+# restricciones más relevantes acá es la limitación de los nombres de columnas del dataset, puesto que el modelo podría inferir nombres basados en el contexto de 
+# la pregunta sin que fueran nombres reales en el dataset, desembocando en errores de ejecución dado que Python tendría conflictos para encontrar dentro de sus 
+# indices un campo que el modelo trató de rellenar para completar la solicitud. Si dicha restricción se eliminara, ante preguntas como ¿Cuál es mi album preferido?
+# la respuesta del LLM podría hacer referencia a campos inexistentes como df['album_title'] o df['artist_album'], mientras que mantener la restricción permite que
+# el LLM responda correctamente refiriendose al campo df['album_name'], el cual es un campo válido en el dataset.
 
-#La Sección 2 corresponde a funciones reutilizables dentro del código, encargadas de dar formato y enriquecer los datos (load_data), modificar el system prompt con las variables y restricciones provenientes del dataset cargado (build_prompt), envío de system prompt, solicitudes y preguntas al LLM (get_response), tratamiento de la respuesta de texto del LLM para extraer la porción de código propuesta por el LLM (parse_response) y la ejecución local del código Python extraído de la respuesta, con la cual se crea la gráfica que responde a la pregunta realizada por el usuario (execute_chart). 
+# La Sección 2 corresponde a funciones reutilizables dentro del código, encargadas de dar formato y enriquecer los datos (load_data), modificar el system prompt con
+# las variables y restricciones provenientes del dataset cargado (build_prompt), envío de system prompt, solicitudes y preguntas al LLM (get_response), tratamiento
+# de la respuesta de texto del LLM para extraer la porción de código propuesta por el LLM (parse_response) y la ejecución local del código Python extraído de la 
+# respuesta, con la cual se crea la gráfica que responde a la pregunta realizada por el usuario (execute_chart). 
 
-#Posteriormente, la Sección 3 consiste en la definición de la interfaz de usuario de la página y la incorporación de los elementos obtenidos de la Sección 2 para responder dinámicamente a las preguntas utilizando gráficos.
+# Posteriormente, la Sección 3 consiste en la definición de la interfaz de usuario de la página y la incorporación de los elementos obtenidos de la Sección 2 para 
+# responder dinámicamente a las preguntas utilizando gráficos.
 
-#En esencia, cada vez que el usuario hace una nueva consulta, la aplicación envia el system prompt, la consulta del usuario y el esquema del dataset (nombres de columnas y tipos de datos/ejemplos) al LLM, le solicita que cree una porción de código que permita responder con un gráfico a la pregunta del usuario, luego extrae ese código y lo ejecuta localmente para construir la gráfica dentro de Python para mostrarla finalmente en la página web. Todas las solicitudes al LLM consisten en utilizar ciertos elementos relevantes de los datos y el sytem prompt como restricciones de las respuestas para que se pueda generar código dinámicamente, de tal modo que la pregunta del usuario se pueda responder de manera consistente con el formato y contenido del dataset mientras que la ejecución del código se mantiene en el entorno local de ejecución de la app.
+# En esencia, cada vez que el usuario hace una nueva consulta, la aplicación envia el system prompt, la consulta del usuario y el esquema del dataset (nombres de 
+# columnas y tipos de datos/ejemplos) al LLM, le solicita que cree una porción de código que permita responder con un gráfico a la pregunta del usuario, luego 
+# extrae ese código y lo ejecuta localmente para construir la gráfica dentro de Python para mostrarla finalmente en la página web. Todas las solicitudes al LLM 
+# consisten en utilizar ciertos elementos relevantes de los datos y el sytem prompt como restricciones de las respuestas para que se pueda generar código 
+# dinámicamente, de tal modo que la pregunta del usuario se pueda responder de manera consistente con el formato y contenido del dataset mientras que la ejecución
+# del código se mantiene en el entorno local de ejecución de la app.
 
-# Las razones por las cuales esta arquitectura no entrega directamente los datos al LLM se pueden resumir en 2 aspectos principales: optimización de recursos y privacidad. La optimización de recursos se refiere al consumo que se requiere por parte del modelo; dado que cada solicitud se ejecuta independientemente y sin mantener memoria de conversación, el cargar los datos al modelo implicaria su lectura completa cada vez que el usuario utiliza la página, lo cual llevaría a un consumo excesivo de tokens y tiempo de procesamiento. En cuanto a la privacidad, esta arquitectura es una opción que permite explotar las capacidades de codificación de los modelos y su nivel de adaptabilidad y razonamiento para generar dinámicamente las respuestas sin necesidad de depender de líneas de código escritas en el archivo (hard coded), mientras se mantienen datos sensibles fuera del alcance de posibles filtraciones o almacenamiento en los servidores del modelo.
+# Las razones por las cuales esta arquitectura no entrega directamente los datos al LLM se pueden resumir en 2 aspectos principales: optimización de recursos y 
+# privacidad. La optimización de recursos se refiere al consumo que se requiere por parte del modelo; dado que cada solicitud se ejecuta independientemente y sin 
+# mantener memoria de conversación, el cargar los datos al modelo implicaria su lectura completa cada vez que el usuario utiliza la página, lo cual llevaría a un 
+# consumo excesivo de tokens y tiempo de procesamiento. En cuanto a la privacidad, esta arquitectura es una opción que permite explotar las capacidades de 
+# codificación de los modelos y su nivel de adaptabilidad y razonamiento para generar dinámicamente las respuestas sin necesidad de depender de líneas de código 
+# escritas en el archivo (hard coded), mientras se mantienen datos sensibles fuera del alcance de posibles filtraciones o almacenamiento en los servidores del 
+# modelo.
