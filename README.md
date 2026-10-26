@@ -28,3 +28,17 @@ An interactive natural language analytics assistant built with **Streamlit**, **
 ├── streaming_history.json   # Spotify streaming history dataset (local)
 ├── requirements.txt         # Dependencies list
 └── README.md                # Project documentation
+
+
+## Installation
+### Clone the repository:
+git clone [https://github.com/](https://github.com/)<your-username>/<your-repo-name>.git
+cd <your-repo-name>
+
+### Install required packages
+pip install -r requirements.txt
+
+### Configure Secrets:
+- Create a .streamlit/secrets.toml file in the project root folder with the following contents:
+OPENAI_API_KEY = "your-openai-api-key"
+PASSWORD = "your-app-password"
